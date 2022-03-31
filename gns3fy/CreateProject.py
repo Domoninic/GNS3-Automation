@@ -5,34 +5,15 @@ from requests import HTTPError
 from gns3fy import Gns3Connector, Project, Node, Link
 from pprint import pprint
 from netmiko import ConnectHandler
+import json   
+
 
 GNS3_IP = "198.18.1.200"
 GNS3_SERVER_URL = (f"http://{GNS3_IP}:3080")
 PROJECT = "GNS3fy"
-TEMPLATE = "IOSv"
-DEVICE_TYPE = "cisco_ios_telnet"
 
-# this should be in a topology file 
-ROUTERS = [
-      { 'name':'R1', 'x':0, 'y':-150, 'template':TEMPLATE, 'device_type': DEVICE_TYPE,
-            'interfaces' : [
-                  { 'name' : 'interface Gi0/0', 'IP' : '10.1.2.1', 'mask' :"255.255.255.0", 'desc' : 'R2'},
-                  { 'name' : 'interface Gi0/1', 'IP' : '10.1.3.1', 'mask' :"255.255.255.0", 'desc' : 'R3'}
-            ]
-      },
-	{ 'name':'R2', 'x':-150, 'y':0, 'template':TEMPLATE, 'device_type': DEVICE_TYPE,
-            'interfaces' : [
-                  { 'name' : 'interface Gi0/0', 'IP' : '10.1.2.2', 'mask' :"255.255.255.0", 'desc' : 'R1'},
-                  { 'name' : 'interface Gi0/2', 'IP' : '10.2.3.2', 'mask' :"255.255.255.0", 'desc' : 'R3'}
-            ]
-       },
-	{ 'name':'R3', 'x':150, 'y':0, 'template':TEMPLATE, 'device_type': DEVICE_TYPE,
-            'interfaces' : [
-                  { 'name' : 'interface Gi0/1', 'IP' : '10.1.3.3', 'mask' :"255.255.255.0", 'desc' : 'R1'},
-                  { 'name' : 'interface Gi0/2', 'IP' : '10.2.3.3', 'mask' :"255.255.255.0", 'desc' : 'R2'}
-            ]
-      }
-]
+with open('routers.json', 'r') as filehandle:
+    ROUTERS = json.load(filehandle)
 
 # Define the connector object, by default its port is 3080
 server = Gns3Connector(url=GNS3_SERVER_URL)
