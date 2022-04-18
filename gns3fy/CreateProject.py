@@ -9,8 +9,10 @@ from gns3fy import Gns3Connector, Link, Node, Project
 GNS3_IP = "198.18.1.200"
 GNS3_SERVER_URL = f"http://{GNS3_IP}:3080"
 PROJECT = "GNS3fy"
+NODE_START_DELAY = 120
+TOPOLOGY_FILE = "routers.json"
 
-with open("routers.json", "r") as filehandle:
+with open(TOPOLOGY_FILE, "r") as filehandle:
     ROUTERS = json.load(filehandle)
 
 # Define the connector object, by default its port is 3080
@@ -88,8 +90,6 @@ for nodes in LINKS:
 for node in lab.nodes:
     node.start()
     time.sleep(3)
-
-NODE_START_DELAY = 120
 
 print(f"Waiting { NODE_START_DELAY } seconds for nodes to start")
 time.sleep(NODE_START_DELAY)
