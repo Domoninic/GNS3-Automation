@@ -1,6 +1,5 @@
 # from cmath import e
 import time
-import telnetlib
 from requests import HTTPError
 from gns3fy import Gns3Connector, Project, Node, Link
 from pprint import pprint
@@ -100,11 +99,6 @@ NODE_START_DELAY = 120
 print(f"Waiting { NODE_START_DELAY } seconds for nodes to start")
 time.sleep(NODE_START_DELAY)
 print(f"Finished Waiting")
-
-# for node in lab.nodes:
-#    tn = telnetlib.Telnet(GNS3_IP, node.console)
-#    tn.write(b"\r\n")
-#    tn.close
 
 for node in lab.nodes:
     R = {
