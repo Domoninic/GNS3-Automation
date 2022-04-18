@@ -1,10 +1,10 @@
-# from cmath import e
-import time
-from requests import HTTPError
-from gns3fy import Gns3Connector, Project, Node, Link
-from netmiko import ConnectHandler
 import json
+import time
 
+from netmiko import ConnectHandler
+from requests import HTTPError
+
+from gns3fy import Gns3Connector, Link, Node, Project
 
 GNS3_IP = "198.18.1.200"
 GNS3_SERVER_URL = f"http://{GNS3_IP}:3080"
