@@ -2,7 +2,6 @@
 import time
 from requests import HTTPError
 from gns3fy import Gns3Connector, Project, Node, Link
-from pprint import pprint
 from netmiko import ConnectHandler
 import json
 
@@ -64,10 +63,6 @@ for router in ROUTERS:
 # Now check again the status of the nodes
 lab.get_nodes()
 print(lab.nodes_summary())
-
-# Print properties of the nodes
-# for node in lab.nodes:
-#    pprint(node.properties)
 
 # Define links  Need to mak this part of topology file and not dependent on knowing node numbers
 LINKS = [
