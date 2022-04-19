@@ -100,7 +100,6 @@ for node in lab.nodes:
         "ip": GNS3_IP,
         "device_type": "cisco_ios_telnet",
         "port": node.console,
-        "auto_connect": False,
     }
 
     ROUTER = next(item for item in ROUTERS if item["name"] == node.name)
@@ -117,11 +116,9 @@ for node in lab.nodes:
     commands.append("copy run start")
     try:
         net_connect = ConnectHandler(**R)
-        net_connect.establish_connection()
         net_connect.send_config_set(commands)
         output = net_connect.send_command("show ip int brief")
         print(output)
-        net_connect.disconnect()
     except Exception as e:
         print("Unknown error - type :" + e.__class__.__name__)
         print(e)
