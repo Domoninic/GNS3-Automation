@@ -10,51 +10,50 @@ GNS3_IP = "198.18.1.200"
 GNS3_SERVER_URL = f"http://{GNS3_IP}:3080"
 PROJECT = "GNS3fy"
 NODE_START_DELAY = 120
-TOPOLOGY_FILE = "routers.json"
+TOPOLOGY_FILE = "devices.json"
 
 with open(TOPOLOGY_FILE, "r") as filehandle:
-    ROUTERS = json.load(filehandle)
+    devices = json.load(filehandle)
 
 # Define the connector object, by default its port is 3080
-server = Gns3Connector(url=GNS3_SERVER_URL)
+gns3_server = Gns3Connector(url=GNS3_SERVER_URL)
 
 # Verify connectivity by checking the server version
-print(server.get_version())
+print(gns3_server.get_version())
 
 # Now obtain a project from the server
-lab = Project(
+project = Project(
     name=PROJECT,
     path=f"/opt/gns3/projects/{PROJECT}",
     scene_height=500,
     scene_width=500,
-    connector=server,
+    connector=gns3_server,
 )
 
 try:
-    lab.create()
+    project.create()
 except HTTPError as e:
     print(e)
-    lab.get()
-    lab.delete()
-    lab = Project(name=PROJECT, path=f"/opt/gns3/projects/{PROJECT}", connector=server)
-    lab.create()
+    project.get()
+    project.delete()
+    project = Project(
+        name=PROJECT, path=f"/opt/gns3/projects/{PROJECT}", connector=gns3_server
+    )
+    project.create()
 except Exception as e:
     print("Unknown error - type :" + e.__class__.__name__)
     print(e)
 
-
 # Show some of its attributes
-print(f"{lab.name}: {lab.project_id} -- Status {lab.status}")
-print(f"{lab.path}")
-
-print(lab.nodes_summary())
+print(f"{project.name}: {project.project_id} -- Status {project.status}")
+print(f"{project.path}")
+print(project.nodes_summary())
 
 # add Nodes
-# nodes
-for router in ROUTERS:
+for router in devices:
     node = Node(
-        project_id=lab.project_id,
-        connector=server,
+        project_id=project.project_id,
+        connector=gns3_server,
         name=router["name"],
         template=router["template"],
         x=router["x"],
@@ -63,31 +62,31 @@ for router in ROUTERS:
     node.create()
 
 # Now check again the status of the nodes
-lab.get_nodes()
-print(lab.nodes_summary())
+project.get_nodes()
+print(project.nodes_summary())
 
 # Define links  Need to mak this part of topology file and not dependent on knowing node numbers
-LINKS = [
+links = [
     [
-        dict(node_id=lab.nodes[0].node_id, adapter_number=0, port_number=0),
-        dict(node_id=lab.nodes[1].node_id, adapter_number=0, port_number=0),
+        dict(node_id=project.nodes[0].node_id, adapter_number=0, port_number=0),
+        dict(node_id=project.nodes[1].node_id, adapter_number=0, port_number=0),
     ],
     [
-        dict(node_id=lab.nodes[0].node_id, adapter_number=1, port_number=0),
-        dict(node_id=lab.nodes[2].node_id, adapter_number=1, port_number=0),
+        dict(node_id=project.nodes[0].node_id, adapter_number=1, port_number=0),
+        dict(node_id=project.nodes[2].node_id, adapter_number=1, port_number=0),
     ],
     [
-        dict(node_id=lab.nodes[1].node_id, adapter_number=2, port_number=0),
-        dict(node_id=lab.nodes[2].node_id, adapter_number=2, port_number=0),
+        dict(node_id=project.nodes[1].node_id, adapter_number=2, port_number=0),
+        dict(node_id=project.nodes[2].node_id, adapter_number=2, port_number=0),
     ],
 ]
 # create links
-for nodes in LINKS:
-    link = Link(project_id=lab.project_id, connector=server, nodes=nodes)
+for nodes in links:
+    link = Link(project_id=project.project_id, connector=gns3_server, nodes=nodes)
     link.create()
 
 # start all the nodes
-for node in lab.nodes:
+for node in project.nodes:
     node.start()
     time.sleep(3)
 
@@ -95,19 +94,19 @@ print(f"Waiting { NODE_START_DELAY } seconds for nodes to start")
 time.sleep(NODE_START_DELAY)
 print(f"Finished Waiting")
 
-for node in lab.nodes:
+for node in project.nodes:
     R = {
         "ip": GNS3_IP,
         "device_type": "cisco_ios_telnet",
         "port": node.console,
     }
 
-    ROUTER = next(item for item in ROUTERS if item["name"] == node.name)
-    INTERFACES = ROUTER["interfaces"]
+    device = next(item for item in devices if item["name"] == node.name)
+    interfaces = device["interfaces"]
 
     # move building commands to a template
-    commands = [f'hostname { ROUTER["name"]}']
-    for interface in INTERFACES:
+    commands = [f'hostname {device["name"]}']
+    for interface in interfaces:
         commands.append(f'{interface["name"]}')
         commands.append(f'ip address {interface["IP"]} {interface["mask"]}')
         commands.append(f'description {interface["desc"]}')
@@ -123,4 +122,4 @@ for node in lab.nodes:
         print("Unknown error - type :" + e.__class__.__name__)
         print(e)
 
-# lab.close()
+# project.close()
