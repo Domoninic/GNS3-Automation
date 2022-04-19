@@ -1,8 +1,9 @@
 import json
 import time
+import sys
 
-from netmiko import ConnectHandler
-from requests import HTTPError
+from netmiko import ConnectHandler, NetmikoAuthenticationException
+from requests import HTTPError, ConnectionError
 
 from gns3fy import Gns3Connector, Link, Node, Project
 
@@ -19,7 +20,11 @@ with open(TOPOLOGY_FILE, "r") as filehandle:
 gns3_server = Gns3Connector(url=GNS3_SERVER_URL)
 
 # Verify connectivity by checking the server version
-print(gns3_server.get_version())
+try:
+    print(gns3_server.get_version())
+except ConnectionError as e:
+    print(f"Connection to {gns3_server} failed:" + e.__class__.__name__)
+    sys.exit(1)
 
 # Now obtain a project from the server
 project = Project(
@@ -40,9 +45,6 @@ except HTTPError as e:
         name=PROJECT, path=f"/opt/gns3/projects/{PROJECT}", connector=gns3_server
     )
     project.create()
-except Exception as e:
-    print("Unknown error - type :" + e.__class__.__name__)
-    print(e)
 
 # Show some of its attributes
 print(f"{project.name}: {project.project_id} -- Status {project.status}")
@@ -50,14 +52,14 @@ print(f"{project.path}")
 print(project.nodes_summary())
 
 # add Nodes
-for router in devices:
+for device in devices:
     node = Node(
         project_id=project.project_id,
         connector=gns3_server,
-        name=router["name"],
-        template=router["template"],
-        x=router["x"],
-        y=router["y"],
+        name=device["name"],
+        template=device["template"],
+        x=device["x"],
+        y=device["y"],
     )
     node.create()
 
@@ -118,8 +120,10 @@ for node in project.nodes:
         net_connect.send_config_set(commands)
         output = net_connect.send_command("show ip int brief")
         print(output)
-    except Exception as e:
-        print("Unknown error - type :" + e.__class__.__name__)
+    except (ConnectionRefusedError, NetmikoAuthenticationException) as e:
+        print(
+            f'Connection to {device["name"]} failed: Error from Module:{e.__module__},type:{e.__class__.__name__}'
+        )
         print(e)
 
 # project.close()
