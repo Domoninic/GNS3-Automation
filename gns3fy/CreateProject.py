@@ -44,7 +44,11 @@ def run():
         project.get()
         project.delete()
         project = Project(
-            name=PROJECT, path=f"/opt/gns3/projects/{PROJECT}", connector=gns3_server
+            name=PROJECT,
+            path=f"/opt/gns3/projects/{PROJECT}",
+            scene_height=500,
+            scene_width=500,
+            connector=gns3_server,
         )
         project.create()
 
@@ -63,7 +67,10 @@ def run():
             x=device["x"],
             y=device["y"],
         )
-        node.create()
+        try:
+            node.create()
+        except HTTPError as e:
+            print(e)
 
     # Now check again the status of the nodes
     project.get_nodes()
@@ -87,7 +94,10 @@ def run():
     # create links
     for nodes in links:
         link = Link(project_id=project.project_id, connector=gns3_server, nodes=nodes)
-        link.create()
+        try:
+            link.create()
+        except HTTPError as e:
+            print(e)
 
     # start all the nodes
     for node in project.nodes:
