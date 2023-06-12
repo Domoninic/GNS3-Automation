@@ -14,7 +14,7 @@ NODE_START_DELAY = 120
 TOPOLOGY_FILE = "devices.json"
 
 
-def run():
+def main():
     with open(TOPOLOGY_FILE, "r") as filehandle:
         devices = json.load(filehandle)
 
@@ -76,19 +76,28 @@ def run():
     project.get_nodes()
     print(project.nodes_summary())
 
-    # Define links  Need to mak this part of topology file and not dependent on knowing node numbers
+    # Define links  Need to make this part of topology file and not dependent on knowing node numbers
+    # will need to use liist comprehension, something like :
+    # node_id = [node.node_id for node in project.nodes if node.name = "R1"[[0]
+    # https://stackoverflow.com/questions/13703295/how-to-access-an-object-in-a-list-by-property
+    # http://codepad.org/0H6wom4T
+
     links = [
         [
-            dict(node_id=project.nodes[0].node_id, adapter_number=0, port_number=0),
-            dict(node_id=project.nodes[1].node_id, adapter_number=0, port_number=0),
+            dict(node_id=project.nodes[0].node_id, adapter_number=1, port_number=0),
+            dict(node_id=project.nodes[1].node_id, adapter_number=1, port_number=0),
         ],
         [
-            dict(node_id=project.nodes[0].node_id, adapter_number=1, port_number=0),
+            dict(node_id=project.nodes[0].node_id, adapter_number=2, port_number=0),
             dict(node_id=project.nodes[2].node_id, adapter_number=1, port_number=0),
         ],
         [
             dict(node_id=project.nodes[1].node_id, adapter_number=2, port_number=0),
             dict(node_id=project.nodes[2].node_id, adapter_number=2, port_number=0),
+        ],
+        [
+            dict(node_id=project.nodes[0].node_id, adapter_number=0, port_number=0),
+            dict(node_id=project.nodes[3].node_id, adapter_number=0, port_number=2),
         ],
     ]
     # create links
@@ -101,46 +110,52 @@ def run():
 
     # start all the nodes
     for node in project.nodes:
-        node.start()
-        time.sleep(3)
+        if node.node_type == "cloud":
+            pass
+        else:
+            node.start()
+            time.sleep(3)
 
     print(f"Waiting { NODE_START_DELAY } seconds for nodes to start")
     time.sleep(NODE_START_DELAY)
     print(f"Finished Waiting")
 
     for node in project.nodes:
-        R = {
-            "ip": GNS3_IP,
-            "device_type": "cisco_ios_telnet",
-            "port": node.console,
-        }
+        if node.node_type == "cloud":
+            pass
+        else:
+            R = {
+                "ip": GNS3_IP,
+                "device_type": "cisco_ios_telnet",
+                "port": node.console,
+            }
 
-        device = next(item for item in devices if item["name"] == node.name)
-        interfaces = device["interfaces"]
+            device = next(item for item in devices if item["name"] == node.name)
+            interfaces = device["interfaces"]
 
-        # move building commands to a template
-        commands = [f'hostname {device["name"]}']
-        for interface in interfaces:
-            commands.append(f'{interface["name"]}')
-            commands.append(f'ip address {interface["IP"]} {interface["mask"]}')
-            commands.append(f'description {interface["desc"]}')
-            commands.append("no shutdown")
-        commands.append("end")
-        commands.append("copy run start")
-        try:
-            net_connect = ConnectHandler(**R)
-            net_connect.send_config_set(commands)
-            output = net_connect.send_command("show ip int brief")
-            print(output)
-        except (ConnectionRefusedError, NetmikoAuthenticationException) as e:
-            print(
-                f'Connection to {device["name"]} failed: Error from Module:{e.__module__},type:{e.__class__.__name__}'
-            )
-            print(e)
+            # move building commands to a template
+            commands = [f'hostname {device["name"]}']
+            for interface in interfaces:
+                commands.append(f'{interface["name"]}')
+                commands.append(f'ip address {interface["IP"]} {interface["mask"]}')
+                commands.append(f'description {interface["desc"]}')
+                commands.append("no shutdown")
+            commands.append("end")
+            commands.append("copy run start")
+            try:
+                net_connect = ConnectHandler(**R)
+                net_connect.send_config_set(commands)
+                output = net_connect.send_command("show ip int brief")
+                print(output)
+            except (ConnectionRefusedError, NetmikoAuthenticationException) as e:
+                print(
+                    f'Connection to {device["name"]} failed: Error from Module:{e.__module__},type:{e.__class__.__name__}'
+                )
+                print(e)
 
 
 # project.close()
 
 
 if __name__ == "__main__":
-    run()
+    main()
