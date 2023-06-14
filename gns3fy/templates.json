@@ -1,0 +1,21 @@
+[
+    {
+        "category": "guest",
+        "default_name_format": "Cloud{0}",
+        "name": "GNSMgmt",
+        "ports_mapping": [
+            {
+                "interface": "eth2",
+                "name": "eth2",
+                "port_number": 0,
+                "type": "ethernet"
+            }
+        ],
+        "remote_console_host": "127.0.0.1",
+        "remote_console_http_path": "/",
+        "remote_console_port": 23,
+        "remote_console_type": "none",
+        "symbol": ":/symbols/cloud.svg",
+        "template_type": "cloud"
+    }
+]
