@@ -27,7 +27,7 @@ def main():
         print(f"Connection to {gns3_server} failed:" + e.__class__.__name__)
         sys.exit(1)
 
-    # create cloud template
+    # create cloud template if it does not exist
     with open(TEMPLATE_FILE, "r") as filehandle:
         templates = json.load(filehandle)
     for template in templates:
