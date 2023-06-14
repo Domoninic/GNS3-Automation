@@ -72,7 +72,7 @@
         "name": "GNSMgmt",
         "x": -50,
         "y": -300,
-        "template": "Cloud",
+        "template": "GNSMgmt",
         "device_type": "cloud"
     }
 ]

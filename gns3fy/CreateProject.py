@@ -1,9 +1,10 @@
 import json
-import time
 import sys
+import time
+
 
 from netmiko import ConnectHandler, NetmikoAuthenticationException
-from requests import HTTPError, ConnectionError
+from requests import ConnectionError, HTTPError
 
 from gns3fy import Gns3Connector, Link, Node, Project
 
@@ -11,13 +12,11 @@ GNS3_IP = "198.18.1.200"
 GNS3_SERVER_URL = f"http://{GNS3_IP}:3080"
 PROJECT = "GNS3fy"
 NODE_START_DELAY = 120
+TEMPLATE_FILE = "templates.json"
 TOPOLOGY_FILE = "devices.json"
 
 
 def main():
-    with open(TOPOLOGY_FILE, "r") as filehandle:
-        devices = json.load(filehandle)
-
     # Define the connector object, by default its port is 3080
     gns3_server = Gns3Connector(url=GNS3_SERVER_URL)
 
@@ -27,6 +26,15 @@ def main():
     except ConnectionError as e:
         print(f"Connection to {gns3_server} failed:" + e.__class__.__name__)
         sys.exit(1)
+
+    # create cloud template
+    with open(TEMPLATE_FILE, "r") as filehandle:
+        templates = json.load(filehandle)
+    for template in templates:
+        try:
+            gns3_server.create_template(**template)
+        except ValueError as e:
+            print(f"{e}")
 
     # Now obtain a project from the server
     project = Project(
@@ -58,6 +66,9 @@ def main():
     print(project.nodes_summary())
 
     # add Nodes
+    with open(TOPOLOGY_FILE, "r") as filehandle:
+        devices = json.load(filehandle)
+
     for device in devices:
         node = Node(
             project_id=project.project_id,
@@ -97,7 +108,7 @@ def main():
         ],
         [
             dict(node_id=project.nodes[0].node_id, adapter_number=0, port_number=0),
-            dict(node_id=project.nodes[3].node_id, adapter_number=0, port_number=2),
+            dict(node_id=project.nodes[3].node_id, adapter_number=0, port_number=0),
         ],
     ]
     # create links
