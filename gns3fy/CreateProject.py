@@ -1,9 +1,9 @@
 import json
 import sys
 import time
+from pprint import pprint
 
-
-from netmiko import ConnectHandler, NetmikoAuthenticationException
+from netmiko import ConnectHandler, NetmikoAuthenticationException, ReadTimeout
 from requests import ConnectionError, HTTPError
 
 from gns3fy import Gns3Connector, Link, Node, Project
@@ -93,37 +93,49 @@ def main():
     # https://stackoverflow.com/questions/13703295/how-to-access-an-object-in-a-list-by-property
     # http://codepad.org/0H6wom4T
 
-    links = [
-        [
-            dict(node_id=project.nodes[0].node_id, adapter_number=1, port_number=0),
-            dict(node_id=project.nodes[1].node_id, adapter_number=1, port_number=0),
-        ],
-        [
-            dict(node_id=project.nodes[0].node_id, adapter_number=2, port_number=0),
-            dict(node_id=project.nodes[2].node_id, adapter_number=1, port_number=0),
-        ],
-        [
-            dict(node_id=project.nodes[1].node_id, adapter_number=2, port_number=0),
-            dict(node_id=project.nodes[2].node_id, adapter_number=2, port_number=0),
-        ],
-        [
-            dict(node_id=project.nodes[0].node_id, adapter_number=0, port_number=0),
-            dict(node_id=project.nodes[3].node_id, adapter_number=0, port_number=0),
-        ],
-    ]
+    # links = [
+    #    [
+    #        dict(node_id=project.nodes[0].node_id, adapter_number=1, port_number=0),
+    #        dict(node_id=project.nodes[1].node_id, adapter_number=1, port_number=0),
+    #    ],
+    #    [
+    #        dict(node_id=project.nodes[0].node_id, adapter_number=2, port_number=0),
+    #        dict(node_id=project.nodes[2].node_id, adapter_number=1, port_number=0),
+    #    ],
+    #    [
+    #        dict(node_id=project.nodes[1].node_id, adapter_number=2, port_number=0),
+    #        dict(node_id=project.nodes[2].node_id, adapter_number=2, port_number=0),
+    #    ],
+    #    [
+    #        dict(node_id=project.nodes[0].node_id, adapter_number=0, port_number=0),
+    #        dict(node_id=project.nodes[3].node_id, adapter_number=0, port_number=0),
+    #    ],
+    # ]
     # create links
-    for nodes in links:
-        link = Link(project_id=project.project_id, connector=gns3_server, nodes=nodes)
-        try:
-            link.create()
-        except HTTPError as e:
-            print(e)
+    # for nodes in links:
+    #    link = Link(project_id=project.project_id, connector=gns3_server, nodes=nodes)
+    #    try:
+    #        link.create()
+    #    except HTTPError as e:
+    #        print(e)
+
+    # Or maybe just use the Creat_links function :-)
+    links = []
+    # Links should be built from topology
+    links.append(("R1", "Gi0/1", "R2", "Gi0/1"))
+    links.append(("R1", "Gi0/2", "R3", "Gi0/1"))
+    links.append(("R2", "Gi0/2", "R3", "Gi0/2"))
+    links.append(("R1", "Gi0/0", "GNSMgmt", "eth2"))
+
+    for link in links:
+        project.create_link(*link)
 
     # start all the nodes
     for node in project.nodes:
         if node.node_type == "cloud":
             pass
         else:
+            print(f"Starting Node {node.name}")
             node.start()
             time.sleep(3)
 
@@ -139,26 +151,40 @@ def main():
                 "ip": GNS3_IP,
                 "device_type": "cisco_ios_telnet",
                 "port": node.console,
+                "session_log": f"{node.name}_log.txt",
             }
 
             device = next(item for item in devices if item["name"] == node.name)
             interfaces = device["interfaces"]
 
-            # move building commands to a template
+            # move building commands to a jinja template
             commands = [f'hostname {device["name"]}']
+            # commands = []
             for interface in interfaces:
-                commands.append(f'{interface["name"]}')
+                commands.append(f'interface {interface["name"]}')
                 commands.append(f'ip address {interface["IP"]} {interface["mask"]}')
                 commands.append(f'description {interface["desc"]}')
                 commands.append("no shutdown")
-            commands.append("end")
-            commands.append("copy run start")
+            commands.append("exit")
+            commands.append("do copy run start)")
+            pprint(commands)
             try:
-                net_connect = ConnectHandler(**R)
-                net_connect.send_config_set(commands)
-                output = net_connect.send_command("show ip int brief")
-                print(output)
-            except (ConnectionRefusedError, NetmikoAuthenticationException) as e:
+                with ConnectHandler(**R) as net_connect:
+                    net_connect = ConnectHandler(**R)
+                    print(net_connect.send_config_set(commands))
+                    print("Finding prompt")
+                    prompt = net_connect.find_prompt()
+                    print(f"Prompt: {prompt}")
+                    output = net_connect.send_command(
+                        "show ip int brief", expect_string=prompt
+                    )
+                    print(output)
+                    net_connect.disconnect()
+            except (
+                ConnectionRefusedError,
+                NetmikoAuthenticationException,
+                ReadTimeout,
+            ) as e:
                 print(
                     f'Connection to {device["name"]} failed: Error from Module:{e.__module__},type:{e.__class__.__name__}'
                 )
