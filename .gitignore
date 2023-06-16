@@ -3,3 +3,4 @@
 __pycache__/
 GNS3-Automation.code-workspace
 gns3fy/make_venv.sh
+*.log

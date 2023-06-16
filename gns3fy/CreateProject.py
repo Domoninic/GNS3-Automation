@@ -151,7 +151,7 @@ def main():
                 "ip": GNS3_IP,
                 "device_type": "cisco_ios_telnet",
                 "port": node.console,
-                "session_log": f"{node.name}_log.txt",
+                "session_log": f"{node.name}.log",
             }
 
             device = next(item for item in devices if item["name"] == node.name)
@@ -166,7 +166,7 @@ def main():
                 commands.append(f'description {interface["desc"]}')
                 commands.append("no shutdown")
             commands.append("exit")
-            commands.append("do copy run start)")
+            commands.append("do copy run start")
             pprint(commands)
             try:
                 with ConnectHandler(**R) as net_connect:
@@ -175,6 +175,8 @@ def main():
                     print("Finding prompt")
                     prompt = net_connect.find_prompt()
                     print(f"Prompt: {prompt}")
+
+                    # net_connect.save_config()
                     output = net_connect.send_command(
                         "show ip int brief", expect_string=prompt
                     )
