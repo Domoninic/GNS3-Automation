@@ -12,7 +12,7 @@ GNS3_IP = "198.18.1.200"
 GNS3_SERVER_URL = f"http://{GNS3_IP}:3080"
 PROJECT = "GNS3fy"
 NODE_START_DELAY = 120
-TEMPLATE_FILE = "templates.json"
+TEMPLATE_FILE = "GNS3_templates.json"
 TOPOLOGY_FILE = "devices.json"
 
 
@@ -87,39 +87,6 @@ def main():
     project.get_nodes()
     print(project.nodes_summary())
 
-    # Define links  Need to make this part of topology file and not dependent on knowing node numbers
-    # will need to use liist comprehension, something like :
-    # node_id = [node.node_id for node in project.nodes if node.name = "R1"[[0]
-    # https://stackoverflow.com/questions/13703295/how-to-access-an-object-in-a-list-by-property
-    # http://codepad.org/0H6wom4T
-
-    # links = [
-    #    [
-    #        dict(node_id=project.nodes[0].node_id, adapter_number=1, port_number=0),
-    #        dict(node_id=project.nodes[1].node_id, adapter_number=1, port_number=0),
-    #    ],
-    #    [
-    #        dict(node_id=project.nodes[0].node_id, adapter_number=2, port_number=0),
-    #        dict(node_id=project.nodes[2].node_id, adapter_number=1, port_number=0),
-    #    ],
-    #    [
-    #        dict(node_id=project.nodes[1].node_id, adapter_number=2, port_number=0),
-    #        dict(node_id=project.nodes[2].node_id, adapter_number=2, port_number=0),
-    #    ],
-    #    [
-    #        dict(node_id=project.nodes[0].node_id, adapter_number=0, port_number=0),
-    #        dict(node_id=project.nodes[3].node_id, adapter_number=0, port_number=0),
-    #    ],
-    # ]
-    # create links
-    # for nodes in links:
-    #    link = Link(project_id=project.project_id, connector=gns3_server, nodes=nodes)
-    #    try:
-    #        link.create()
-    #    except HTTPError as e:
-    #        print(e)
-
-    # Or maybe just use the Creat_links function :-)
     links = []
     # Links should be built from topology
     links.append(("R1", "Gi0/1", "R2", "Gi0/1"))
@@ -157,9 +124,7 @@ def main():
             device = next(item for item in devices if item["name"] == node.name)
             interfaces = device["interfaces"]
 
-            # move building commands to a jinja template
             commands = [f'hostname {device["name"]}']
-            # commands = []
             for interface in interfaces:
                 commands.append(f'interface {interface["name"]}')
                 commands.append(f'ip address {interface["IP"]} {interface["mask"]}')
@@ -167,11 +132,10 @@ def main():
                 commands.append("no shutdown")
             commands.append("exit")
             commands.append("do copy run start")
-            pprint(commands)
             try:
                 with ConnectHandler(**R) as net_connect:
                     net_connect = ConnectHandler(**R)
-                    print(net_connect.send_config_set(commands))
+                    net_connect.send_config_set(commands)
                     print("Finding prompt")
                     prompt = net_connect.find_prompt()
                     print(f"Prompt: {prompt}")
