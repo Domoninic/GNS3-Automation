@@ -1,0 +1,42 @@
+- hosts: localhost
+  gather_facts: no
+  vars:
+    gns3_url: "http://198.18.1.200"
+    gns3_nodes_spec:
+      - name: "R1"
+        template: "IOSv"
+      - name: "R2"
+        template: "IOSv"
+      - name: "R3"
+        template: "IOSv"
+      - name: "GNSMgmt"
+        template: "GNSMgmt"
+    gns3_links_spec:
+      - ["R1", "Gi0/1", "R2", "Gi0/1"]
+      - ["R1", "Gi0/2", "R3", "Gi0/1"]
+      - ["R2", "Gi0/2", "R3", "Gi0/2"]
+      - ["R1", "Gi0/0", "GNSMgmt", "eth2"]
+  collections:
+    - davidban77.gns3
+  tasks:
+    - name: "Verify version of GNS3 server"
+      gns3_version:
+        url: "{{ gns3_url }}"
+      register: version
+    - debug: var=version
+
+    - name: "Create network topology"
+      gns3_project:
+        url: "{{ gns3_url }}"
+        project_name: "GNS3Fy_Ansible"
+        state: present
+        nodes_spec: "{{ gns3_nodes_spec }}"
+        links_spec: "{{ gns3_links_spec }}"
+
+    - name: "Start nodes"
+      gns3_project:
+        url: "{{ gns3_url }}"
+        project_name: "GNS3Fy_Ansible"
+        state: opened
+        nodes_state: started
+        nodes_strategy: one_by_one
