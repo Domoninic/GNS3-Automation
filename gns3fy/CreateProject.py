@@ -11,6 +11,8 @@ from gns3fy import Gns3Connector, Link, Node, Project
 GNS3_IP = "198.18.1.200"
 GNS3_SERVER_URL = f"http://{GNS3_IP}:3080"
 PROJECT = "GNS3fy"
+# PATH = None
+PATH = f"/opt/gns3/projects/{PROJECT}"
 NODE_START_DELAY = 120
 TEMPLATE_FILE = "GNS3_templates.json"
 TOPOLOGY_FILE = "devices.json"
@@ -39,7 +41,7 @@ def main():
     # Now obtain a project from the server
     project = Project(
         name=PROJECT,
-        path=f"/opt/gns3/projects/{PROJECT}",
+        path=PATH,
         scene_height=500,
         scene_width=500,
         connector=gns3_server,
@@ -53,7 +55,7 @@ def main():
         project.delete()
         project = Project(
             name=PROJECT,
-            path=f"/opt/gns3/projects/{PROJECT}",
+            path=PATH,
             scene_height=500,
             scene_width=500,
             connector=gns3_server,
