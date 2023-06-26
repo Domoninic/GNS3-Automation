@@ -2,9 +2,12 @@ apt install python3.10-venv
 python -m venv .venv
 
 source .venv/bin/activate
+python3 -m pip install --upgrade pip
+
 
 pip install gns3fy==0.7.2
+pip install netmiko
 pip install ansible
-pip install  ansible-lint
+pip install ansible-lint
 
 ansible-galaxy collection install davidban77.gns3
