@@ -1,0 +1,14 @@
+- hosts: localhost
+  gather_facts: false
+  vars:
+    gns3_url: "http://198.18.1.200"
+    project_name: "GNS3Fy_Ansible"
+
+  collections:
+    - davidban77.gns3
+  tasks:
+    - name: "Stop nodes and delete project"
+      gns3_project:
+        url: "{{ gns3_url }}"
+        project_name: "{{ project_name }}"
+        state: absent
