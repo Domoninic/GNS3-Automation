@@ -1,30 +1,7 @@
 - hosts: localhost
   gather_facts: false
-  vars:
-    gns3_url: "http://198.18.1.200"
-    project_name: "GNS3Fy_Ansible"
-    gns3_nodes_spec:
-      - name: R1
-        template: "IOSv"
-        x: 0
-        y: -150
-      - name: "R2"
-        template: "IOSv"
-        x: -175
-        y: 0
-      - name: "R3"
-        template: "IOSv"
-        x: 175
-        y: 0
-      - name: "GNSMgmt"
-        template: "GNSMgmt"
-        x: -50
-        y: -300
-    gns3_links_spec:
-      - ["R1", "Gi0/1", "R2", "Gi0/1"]
-      - ["R1", "Gi0/2", "R3", "Gi0/1"]
-      - ["R2", "Gi0/2", "R3", "Gi0/2"]
-      - ["R1", "Gi0/0", "GNSMgmt", "eth2"]
+  vars_files:
+    - inventory/gns3_vars.yml
 
   collections:
     - davidban77.gns3

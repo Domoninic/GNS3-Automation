@@ -6,19 +6,21 @@ from pprint import pprint
 from netmiko import ConnectHandler, NetmikoAuthenticationException, ReadTimeout
 from requests import ConnectionError, HTTPError
 
-from gns3fy import Gns3Connector, Link, Node, Project
+from gns3fy import Gns3Connector, Node, Project
 
-GNS3_IP = "198.18.1.200"
-GNS3_SERVER_URL = f"http://{GNS3_IP}:3080"
-PROJECT = "GNS3fy"
-# PATH = None
-PATH = f"/opt/gns3/projects/{PROJECT}"
-NODE_START_DELAY = 120
-TEMPLATE_FILE = "GNS3_templates.json"
-TOPOLOGY_FILE = "devices.json"
+from gns3fy.gns3_parameters import *
 
 
 def main():
+    PROJECT = "GNS3fy"
+    # PATH = None
+    PROJECTS_PATH = f"{GNS3_PROJECTS_PATH}{PROJECT}"
+    NODE_START_DELAY = 120
+    TEMPLATES_PATH = "./templates/"
+    GNS3_TEMPLATE_FILE = "GNS3_templates.json"
+    DEVICE_FILE = "devices.json"
+    LINKS_FILE = "links.json"
+
     # Define the connector object, by default its port is 3080
     gns3_server = Gns3Connector(url=GNS3_SERVER_URL)
 
@@ -30,7 +32,7 @@ def main():
         sys.exit(1)
 
     # create cloud template if it does not exist
-    with open(TEMPLATE_FILE, "r") as filehandle:
+    with open(f"{TEMPLATES_PATH}{GNS3_TEMPLATE_FILE}", "r") as filehandle:
         templates = json.load(filehandle)
     for template in templates:
         try:
@@ -41,7 +43,7 @@ def main():
     # Now obtain a project from the server
     project = Project(
         name=PROJECT,
-        path=PATH,
+        path=PROJECTS_PATH,
         scene_height=500,
         scene_width=500,
         connector=gns3_server,
@@ -55,7 +57,7 @@ def main():
         project.delete()
         project = Project(
             name=PROJECT,
-            path=PATH,
+            path=PROJECTS_PATH,
             scene_height=500,
             scene_width=500,
             connector=gns3_server,
@@ -68,7 +70,7 @@ def main():
     print(project.nodes_summary())
 
     # add Nodes
-    with open(TOPOLOGY_FILE, "r") as filehandle:
+    with open(f"{TEMPLATES_PATH}{DEVICE_FILE}", "r") as filehandle:
         devices = json.load(filehandle)
 
     for device in devices:
@@ -89,12 +91,10 @@ def main():
     project.get_nodes()
     print(project.nodes_summary())
 
-    links = []
-    # Links should be built from topology
-    links.append(("R1", "Gi0/1", "R2", "Gi0/1"))
-    links.append(("R1", "Gi0/2", "R3", "Gi0/1"))
-    links.append(("R2", "Gi0/2", "R3", "Gi0/2"))
-    links.append(("R1", "Gi0/0", "GNSMgmt", "eth2"))
+    with open(f"{TEMPLATES_PATH}{LINKS_FILE}", "r") as file:
+        links_data = file.read()
+
+    links = json.loads(links_data)
 
     for link in links:
         project.create_link(*link)
@@ -120,7 +120,7 @@ def main():
                 "ip": GNS3_IP,
                 "device_type": "cisco_ios_telnet",
                 "port": node.console,
-                "session_log": f"{node.name}.log",
+                # "session_log": f"{node.name}.log",
             }
 
             device = next(item for item in devices if item["name"] == node.name)
