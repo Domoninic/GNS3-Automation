@@ -1,8 +1,10 @@
-- hosts: localhost
+---
+- name: "Play for destroying GNS3 Projects"
+  hosts: localhost
   gather_facts: false
-  vars:
-    gns3_url: "http://198.18.1.200"
-    project_name: "GNS3Fy_Ansible"
+
+  vars_files:
+    - inventory/gns3_vars.yml
 
   collections:
     - davidban77.gns3

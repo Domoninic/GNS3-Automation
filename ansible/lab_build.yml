@@ -16,7 +16,7 @@
       gns3_project:
         url: "{{ gns3_url }}"
         project_name: "{{ project_name }}"
-        project_path: "/opt/gns3/projects/{{ project_name }}"
+        project_path: "{{ projects_path }}{{ project_name }}"
         scene_height: 500
         scene_width: 500
         state: present
@@ -26,7 +26,21 @@
     - name: "Start nodes"
       gns3_project:
         url: "{{ gns3_url }}"
-        project_name: "GNS3Fy_Ansible"
+        project_name: "{{ project_name }}"
         state: opened
         nodes_state: started
         nodes_strategy: one_by_one
+
+    - name: Collect the nodes inventory
+      gns3_nodes_inventory:
+        url: "{{ gns3_url }}"
+        project_name: "{{ project_name }}"
+      register: nodes_inventory
+
+    - name : "Set nodes fact"
+      ansible.builtin.set_fact:
+        nodes: "{{ hostvars['localhost']['nodes_inventory']['nodes_inventory'] }}"
+
+    - debug: var=nodes_inventory
+
+    - debug: msg="{{ nodes }}"

@@ -3,24 +3,15 @@ import sys
 import time
 from pprint import pprint
 
+from gns3_parameters import *
+from gns3_project import *
 from netmiko import ConnectHandler, NetmikoAuthenticationException, ReadTimeout
 from requests import ConnectionError, HTTPError
 
-from gns3fy import Gns3Connector, Node, Project
-
-from gns3fy.gns3_parameters import *
+from gns3fy import Gns3Connector, Project, Node
 
 
 def main():
-    PROJECT = "GNS3fy"
-    # PATH = None
-    PROJECTS_PATH = f"{GNS3_PROJECTS_PATH}{PROJECT}"
-    NODE_START_DELAY = 120
-    TEMPLATES_PATH = "./templates/"
-    GNS3_TEMPLATE_FILE = "GNS3_templates.json"
-    DEVICE_FILE = "devices.json"
-    LINKS_FILE = "links.json"
-
     # Define the connector object, by default its port is 3080
     gns3_server = Gns3Connector(url=GNS3_SERVER_URL)
 

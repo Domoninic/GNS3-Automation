@@ -1,6 +1,7 @@
 #### GNS3 Server settings
 gns3_url: "http://198.18.1.200"
-project_name: "GNS3Fy_Ansible"
+project_name: "GNS3fy_Ansible"
+projects_path: "/opt/gns3/projects/"
 
 ### Nodes attributes and specifications
 gns3_nodes_spec:

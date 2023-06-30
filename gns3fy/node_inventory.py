@@ -1,10 +1,10 @@
 import sys
 
 from gns3_parameters import *
-from gns3_project import *
+
 from requests import ConnectionError, HTTPError
 
-from gns3fy import Gns3Connector, Link, Node, Project
+from gns3fy import Gns3Connector, Project
 
 
 def main():
@@ -20,15 +20,16 @@ def main():
 
     # Now obtain a project from the server
     project = Project(
-        name=PROJECT,
+        name="GNS3fy_Ansible",
         connector=gns3_server,
     )
-
+    project.get()
     try:
-        project.get()
-        project.delete()
+        nodes_inventory = project.nodes_inventory()
     except HTTPError as e:
         print(e)
+
+    print(nodes_inventory)
 
 
 if __name__ == "__main__":

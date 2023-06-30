@@ -11,3 +11,7 @@ pip install ansible
 pip install ansible-lint
 
 ansible-galaxy collection install davidban77.gns3
+
+
+#run playbook
+ansible-playbook lab.yml -e execute=create
