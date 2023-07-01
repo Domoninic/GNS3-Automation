@@ -1,16 +1,14 @@
 ---
-- name: "Play for destroying GNS3 Projects"
+- name: Play for destroying GNS3 Projects
   hosts: localhost
   gather_facts: false
 
   vars_files:
     - inventory/gns3_vars.yml
 
-  collections:
-    - davidban77.gns3
   tasks:
     - name: "Stop nodes and delete project"
-      gns3_project:
+      davidban77.gns3.gns3_project:
         url: "{{ gns3_url }}"
         project_name: "{{ project_name }}"
         state: absent

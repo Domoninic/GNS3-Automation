@@ -1,19 +1,21 @@
-- hosts: localhost
+---
+- name: Play for creating GNS3 Projects
+  hosts: localhost
   gather_facts: false
   vars_files:
     - inventory/gns3_vars.yml
-
-  collections:
-    - davidban77.gns3
   tasks:
     - name: "Verify version of GNS3 server"
-      gns3_version:
+      davidban77.gns3.gns3_version:
         url: "{{ gns3_url }}"
       register: version
-    - debug: var=version
+
+    - name: "Debug Version"
+      ansible.builtin.debug:
+        var: version
 
     - name: "Create network topology"
-      gns3_project:
+      davidban77.gns3.gns3_project:
         url: "{{ gns3_url }}"
         project_name: "{{ project_name }}"
         project_path: "{{ projects_path }}{{ project_name }}"
@@ -24,7 +26,7 @@
         links_spec: "{{ gns3_links_spec }}"
 
     - name: "Start nodes"
-      gns3_project:
+      davidban77.gns3.gns3_project:
         url: "{{ gns3_url }}"
         project_name: "{{ project_name }}"
         state: opened
@@ -32,15 +34,19 @@
         nodes_strategy: one_by_one
 
     - name: Collect the nodes inventory
-      gns3_nodes_inventory:
+      davidban77.gns3.gns3_nodes_inventory:
         url: "{{ gns3_url }}"
         project_name: "{{ project_name }}"
       register: nodes_inventory
 
-    - name : "Set nodes fact"
+    - name: "Set nodes fact"
       ansible.builtin.set_fact:
         nodes: "{{ hostvars['localhost']['nodes_inventory']['nodes_inventory'] }}"
 
-    - debug: var=nodes_inventory
+    - name: Debug nodes_inventory
+      ansible.builtin.debug:
+        var: nodes_inventory
 
-    - debug: msg="{{ nodes }}"
+    - name: Debug nodes
+      ansible.builtin.debug:
+        msg: "{{ nodes }}"
