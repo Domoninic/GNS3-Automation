@@ -2,7 +2,7 @@
     {
         "name": "R1",
         "x": 0,
-        "y": -150,
+        "y": 0,
         "template": "IOSv",
         "device_type": "cisco_ios_telnet",
         "interfaces": [
@@ -74,5 +74,12 @@
         "y": -300,
         "template": "GNSMgmt",
         "device_type": "cloud"
+    },
+    {
+        "name": "MgmtSwitch",
+        "x": 0,
+        "y": -150,
+        "template": "Ethernet switch",
+        "device_type": "ethernet_switch"
     }
 ]
