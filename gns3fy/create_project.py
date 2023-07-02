@@ -92,9 +92,7 @@ def main():
 
     # start all the nodes
     for node in project.nodes:
-        if node.node_type == "cloud":
-            pass
-        else:
+        if node.status == "stopped":
             print(f"Starting Node {node.name}")
             node.start()
             time.sleep(3)
@@ -104,22 +102,27 @@ def main():
     print(f"Finished Waiting")
 
     for node in project.nodes:
-        if node.node_type == "cloud":
-            pass
-        else:
+        device = next(item for item in devices if item["name"] == node.name)
+
+        if device.get("device_type") == "cisco_ios_telnet":
             R = {
                 "ip": GNS3_IP,
                 "device_type": "cisco_ios_telnet",
                 "port": node.console,
-                # "session_log": f"{node.name}.log",
+                "session_log": f"{node.name}.log",
             }
 
-            device = next(item for item in devices if item["name"] == node.name)
-            interfaces = device["interfaces"]
+            interfaces = device.get("interfaces")
 
             commands = [f'hostname {device["name"]}']
             for interface in interfaces:
                 commands.append(f'interface {interface["name"]}')
+                if "vlan_id" in interface:
+                    commands.append("no shutdown")
+                    commands.append(
+                        f'interface {interface["name"]}.{interface["vlan_id"]}'
+                    )
+                    commands.append(f'encapsulation dot1Q {interface["vlan_id"]}')
                 commands.append(f'ip address {interface["IP"]} {interface["mask"]}')
                 commands.append(f'description {interface["desc"]}')
                 commands.append("no shutdown")
