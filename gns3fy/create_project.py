@@ -4,7 +4,7 @@ import time
 from pprint import pprint
 
 from gns3_parameters import *
-from gns3_project import *
+from projects.gns3_project import *
 from netmiko import ConnectHandler, NetmikoAuthenticationException, ReadTimeout
 from requests import ConnectionError, HTTPError
 
@@ -34,7 +34,7 @@ def main():
     # Now obtain a project from the server
     project = Project(
         name=PROJECT,
-        path=PROJECTS_PATH,
+        path=PROJECT_PATH,
         scene_height=500,
         scene_width=500,
         connector=gns3_server,
@@ -48,7 +48,7 @@ def main():
         project.delete()
         project = Project(
             name=PROJECT,
-            path=PROJECTS_PATH,
+            path=PROJECT_PATH,
             scene_height=500,
             scene_width=500,
             connector=gns3_server,
