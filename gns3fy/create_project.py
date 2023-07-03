@@ -34,7 +34,7 @@ def main():
     # Now obtain a project from the server
     project = Project(
         name=PROJECT,
-        path=PROJECT_PATH,
+        path=GNS3_PROJECT_PATH,
         scene_height=500,
         scene_width=500,
         connector=gns3_server,
@@ -48,7 +48,7 @@ def main():
         project.delete()
         project = Project(
             name=PROJECT,
-            path=PROJECT_PATH,
+            path=GNS3_PROJECT_PATH,
             scene_height=500,
             scene_width=500,
             connector=gns3_server,
@@ -61,7 +61,7 @@ def main():
     print(project.nodes_summary())
 
     # add Nodes
-    with open(f"{TEMPLATES_PATH}{DEVICE_FILE}", "r") as filehandle:
+    with open(f"{PROJECTS_PATH}{DEVICE_FILE}", "r") as filehandle:
         devices = json.load(filehandle)
 
     for device in devices:
@@ -82,7 +82,7 @@ def main():
     project.get_nodes()
     print(project.nodes_summary())
 
-    with open(f"{TEMPLATES_PATH}{LINKS_FILE}", "r") as file:
+    with open(f"{PROJECTS_PATH}{LINKS_FILE}", "r") as file:
         links_data = file.read()
 
     links = json.loads(links_data)
