@@ -1,0 +1,19 @@
+---
+- name: Configure hostname using Telnet connection
+  hosts:
+    - name: R1
+      ansible_host: 198.18.1.200
+      port: 5010
+    - name: R2
+      ansible_host: 198.18.1.200
+      port: 5012
+    - name: R3
+      ansible_host: 198.18.1.200
+      port: 5014
+  vars:
+    ansible_connection: ansible.netmiko_telnet
+  tasks:
+    - name: Configure hostname
+      cisco.ios.ios_command:
+        commands:
+          - hostname {{ inventory_hostname }}
