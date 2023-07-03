@@ -70,8 +70,9 @@ def main():
             connector=gns3_server,
             name=device["name"],
             template=device["template"],
-            x=device["x"],
-            y=device["y"],
+            x=device.get("x"),
+            y=device.get("y"),
+            console=device.get("console"),
         )
         try:
             node.create()
