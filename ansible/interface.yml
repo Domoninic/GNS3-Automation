@@ -1,22 +1,24 @@
-- hosts: localhost
+- name: "Play to collect nodes inventory"
+  hosts: localhost
   gather_facts: false
   vars_files:
     - inventory/gns3_vars.yml
 
-  collections:
-    - davidban77.gns3
-
   tasks:
-    - name: Collect the nodes inventory
-      gns3_nodes_inventory:
+    - name: "Collect the nodes inventory"
+      davidban77.gns3.gns3_nodes_inventory:
         url: "{{ gns3_url }}"
         project_name: "{{ project_name }}"
       register: nodes_inventory
 
-    - debug: var=nodes_inventory
+    - name: "Debug inventory"
+      ansile.builtin.debug:
+        var: nodes_inventory
 
     - name: "Set nodes fact"
       ansible.builtin.set_fact:
         nodes: "{{ hostvars['localhost']['nodes_inventory']['nodes_inventory'] }}"
 
-    - debug: msg="{{ nodes }}"
+    - name: "Debug nodes"
+      ansile.builtin.debug:
+        msg: "{{ nodes }}"

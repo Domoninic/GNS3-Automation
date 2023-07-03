@@ -1,7 +1,7 @@
 import sys
 
 from gns3_parameters import *
-from gns3_project import *
+from projects.gns3_project import *
 from requests import ConnectionError, HTTPError
 
 from gns3fy import Gns3Connector, Link, Node, Project
