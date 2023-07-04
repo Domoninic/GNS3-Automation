@@ -1,0 +1,11 @@
+all:
+  hosts:
+    R1:
+      ansible_host: 198.18.1.200
+      port: 5010
+    R2:
+      ansible_host: 198.18.1.200
+      port: 5012
+    R3:
+      ansible_host: 198.18.1.200
+      port: 5014
