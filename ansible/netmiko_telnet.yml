@@ -5,23 +5,25 @@
 #  vars:
 #    ansible_connection: ansible.netmiko_telnet
   tasks:
-    - name: Configure hostname
+
+#    - name: Configure hostname
 #      cisco.ios.ios_command:
 #        commands:
 #          - hostname {{ inventory_hostname }}
-      
 
+    - name: Configure hostname
       ansible.netcommon.telnet:
         port: '{{ hostvars[inventory_hostname].port }}'
         password_prompt: ''
         login_prompt: ''
-        send_newline: true
+        timeout: 15
+#        send_newline: true
         prompts:
-          - '[>#?]'
+          - '[>#]'
         command:
           - terminal length 0
           - configure terminal
           - hostname {{ inventory_hostname }}
           - exit
           - copy running-config startup-config
-          - startup-config
+          - "\r"
