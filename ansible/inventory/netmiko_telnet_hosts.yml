@@ -3,9 +3,12 @@ all:
     R1:
       ansible_host: 198.18.1.200
       port: 5010
+      device_type: "cisco_ios_telnet"
     R2:
       ansible_host: 198.18.1.200
       port: 5012
+      device_type: "cisco_ios_telnet"
     R3:
       ansible_host: 198.18.1.200
       port: 5014
+      device_type: "cisco_ios_telnet"

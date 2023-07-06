@@ -17,7 +17,7 @@
         password_prompt: ''
         login_prompt: ''
         timeout: 15
-#        send_newline: true
+        send_newline: true
         prompts:
           - '[>#]'
         command:

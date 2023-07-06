@@ -1,0 +1,20 @@
+---
+- name: Test Connection using Telnet connection
+  gather_facts: false
+  hosts: all
+  tasks:
+    - name: Debug hostvars
+      ansible.builtin.debug:
+        msg: '{{ hostvars }}'
+
+    - name: Debug inventory
+      ansible.builtin.debug:
+        msg: '{{ hostvars[inventory_hostname] }}'
+
+    - name: Connect
+      vars:
+        ansible_connection: local
+      netmiko_connect:
+        host: "{{ hostvars[inventory_hostname].ansible_host }}"
+        port: "{{ hostvars[inventory_hostname].port }}"
+        device_type: "{{ hostvars[inventory_hostname].device_type }}"
