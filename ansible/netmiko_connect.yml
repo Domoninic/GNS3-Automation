@@ -13,7 +13,7 @@
 
     - name: Connect
       vars:
-        ansible_connection: local
+#        ansible_connection: local
       netmiko_connect:
         host: "{{ hostvars[inventory_hostname].ansible_host }}"
         port: "{{ hostvars[inventory_hostname].port }}"
