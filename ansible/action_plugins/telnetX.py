@@ -71,12 +71,14 @@ class ActionModule(ActionBase):
                         self.tn.write(b"\n")
                     if send_carriage_return:
                         self.tn.write(b"\r")
-                    self.await_prompts([login_prompt], timeout)
-                    self.tn.write(to_bytes(user + "\n"))
 
-                    if password:
-                        self.await_prompts([password_prompt], timeout)
-                        self.tn.write(to_bytes(password + "\n"))
+                    #                    if user is not None:
+                    #                        self.await_prompts([login_prompt], timeout)
+                    #                        self.tn.write(to_bytes(user + "\n"))
+
+                    #                    if password is not None:
+                    #                        self.await_prompts([password_prompt], timeout)
+                    #                        self.tn.write(to_bytes(password + "\n"))
 
                     self.await_prompts(prompts, timeout)
 
