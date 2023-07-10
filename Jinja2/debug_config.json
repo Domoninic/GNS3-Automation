@@ -1,0 +1,16 @@
+{
+    "name": "Python: configurator.py File",
+    "type": "python",
+    "request": "launch",
+    "program": "${file}",
+    "console": "integratedTerminal",
+    "justMyCode": true,
+    "cwd": "${fileDirname}",
+    "purpose": [
+        "debug-in-terminal"
+    ],
+    "args": [
+        "./data/interface_vars.yaml",
+        "./templates/cisco_interfaces.j2"
+    ]
+}
