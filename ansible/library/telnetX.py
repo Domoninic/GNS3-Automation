@@ -77,15 +77,15 @@ options:
     required: false
     type: int
     default: 1
-  send_newline:
-    description:
-    - Sends a newline character upon successful connection to start the terminal session.
-    required: false
-    type: bool
-    default: false
   send_carriage_return:
     description:
     - Sends a carriage return character upon successful connection to start the terminal session.
+    required: false
+    type: bool
+    default: false
+  send_newline:
+    description:
+    - Sends a newline character upon successful connection to start the terminal session.
     required: false
     type: bool
     default: false
