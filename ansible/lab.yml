@@ -1,8 +1,8 @@
 ### Main playbook to setup or teardown a lab
 - name: Lab creation
-  import_playbook: lab_build.yml
+  import_playbook: "{{ playbook_dir }}/lab_build.yml"
   when: execute == "build"
 
 - name: Lab destruction
-  import_playbook: lab_destroy.yml
+  import_playbook: "{{ playbook_dir }}/lab_destroy.yml"
   when: execute == "destroy"
