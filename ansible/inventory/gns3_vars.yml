@@ -9,17 +9,14 @@ gns3_nodes_spec:
     template: "IOSv"
     x: 0
     y: -150
-    console: 5010
   - name: "R2"
     template: "IOSv"
     x: -175
     y: 0
-    console: 5012
   - name: "R3"
     template: "IOSv"
     x: 175
     y: 0
-    console: 5014
   - name: "GNSMgmt"
     template: "GNSMgmt"
     x: -50

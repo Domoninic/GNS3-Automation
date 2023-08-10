@@ -5,7 +5,6 @@
         "y": 0,
         "template": "IOSv",
         "device_type": "cisco_ios_telnet",
-        "console": 5010,
         "interfaces": [
             {
                 "name": "Gi0/0",
@@ -33,7 +32,6 @@
         "y": 0,
         "template": "IOSv",
         "device_type": "cisco_ios_telnet",
-        "console": 5012,
         "interfaces": [
             {
                 "name": "Gi0/1",
@@ -55,7 +53,6 @@
         "y": 0,
         "template": "IOSv",
         "device_type": "cisco_ios_telnet",
-        "console": 5014,
         "interfaces": [
             {
                 "name": "Gi0/1",

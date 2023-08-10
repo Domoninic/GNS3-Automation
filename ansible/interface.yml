@@ -1,10 +1,14 @@
-- name: "Play to collect nodes inventory"
+- name: "Plays to collect nodes inventory"
   hosts: localhost
   gather_facts: false
   vars_files:
     - inventory/gns3_vars.yml
 
   tasks:
+    - name: "Debug Hosts"
+      ansible.builtin.debug:
+        msg: "{{ hostvars }}"
+
     - name: "Collect the nodes inventory"
       davidban77.gns3.gns3_nodes_inventory:
         url: "{{ gns3_url }}"
@@ -12,13 +16,22 @@
       register: nodes_inventory
 
     - name: "Debug inventory"
-      ansile.builtin.debug:
+      ansible.builtin.debug:
         var: nodes_inventory
 
-    - name: "Set nodes fact"
-      ansible.builtin.set_fact:
-        nodes: "{{ hostvars['localhost']['nodes_inventory']['nodes_inventory'] }}"
+- name: "Plays to run for each inventory host"
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: "Debug Inventory_Hostname"
+      ansible.builtin.debug:
+        msg: "{{ inventory_hostname }} - {{ hostvars['localhost']['nodes_inventory']['nodes_inventory'][inventory_hostname]['console_port'] }}"
 
-    - name: "Debug nodes"
-      ansile.builtin.debug:
-        msg: "{{ nodes }}"
+
+#   - name: "Set nodes fact"
+#     ansible.builtin.set_fact:
+#       nodes: "{{ hostvars['localhost']['nodes_inventory']['nodes_inventory'] }}"
+#
+#   - name: "Debug nodes"
+#     ansible.builtin.debug:
+#       msg: "{{ nodes }}"

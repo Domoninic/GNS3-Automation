@@ -39,14 +39,22 @@
         project_name: "{{ project_name }}"
       register: nodes_inventory
 
-    - name: "Set nodes fact"
-      ansible.builtin.set_fact:
-        nodes: "{{ hostvars['localhost']['nodes_inventory']['nodes_inventory'] }}"
+    - name: Pause for 2 minutes while nodes stsrt
+      ansible.builtin.pause:
+        minutes: 2
 
-    - name: Debug nodes_inventory
-      ansible.builtin.debug:
-        var: nodes_inventory
-
-    - name: Debug nodes
-      ansible.builtin.debug:
-        msg: "{{ nodes }}"
+- name: "Plays to run for each inventory host"
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Configure hostname
+      telnetX:
+        port: "{{ hostvars['localhost']['nodes_inventory']['nodes_inventory'][inventory_hostname]['console_port'] }}"
+        timeout: 5
+        send_carriage_return: true
+        prompts:
+          - '[>#]'
+        command:
+          - configure terminal
+          - hostname {{ inventory_hostname }}
+        when: ansible_net_os == "IOSv"
