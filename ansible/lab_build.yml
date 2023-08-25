@@ -46,15 +46,17 @@
 - name: "Plays to run for each inventory host"
   hosts: all
   gather_facts: false
-  tasks:
-    - name: Configure hostname
-      telnetX:
-        port: "{{ hostvars['localhost']['nodes_inventory']['nodes_inventory'][inventory_hostname]['console_port'] }}"
-        timeout: 5
-        send_carriage_return: true
-        prompts:
-          - '[>#]'
-        command:
-          - configure terminal
-          - hostname {{ inventory_hostname }}
-        when: ansible_net_os == "IOSv"
+#  tasks:
+#   - name: Configure hostname
+#     telnetX:
+#       port: "{{ hostvars['localhost']['nodes_inventory']['nodes_inventory'][inventory_hostname]['console_port'] }}"
+#       timeout: 5
+#       send_carriage_return: true
+#       prompts:
+#         - '[>#]'
+#       command:
+#         - configure terminal
+#         - hostname {{ inventory_hostname }}
+#       when: ansible_net_os == "IOSv"
+  roles:
+    - basic_iosv

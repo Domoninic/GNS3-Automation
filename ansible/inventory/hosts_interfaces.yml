@@ -1,0 +1,17 @@
+all:
+    network:
+        R1:
+            mgmt_ip: 10.0.0.11/24
+            mgmt_interface: GigabitEthernet0/0
+            ansible_net_os: "ios"
+            image_style: "iosv"
+        R2:
+            mgmt_ip: 10.0.0.12/24
+            mgmt_interface: GigabitEthernet0/0
+            ansible_net_os: "ios"
+            image_style: "iosv"
+        R3:
+            mgmt_ip: 10.0.0.13/24
+            mgmt_interface: GigabitEthernet0/0
+            ansible_net_os: "eos"
+            image_style: "iosv"
