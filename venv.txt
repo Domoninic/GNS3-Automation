@@ -1,4 +1,6 @@
+apt install python-is-python3
 apt install python3.10-venv
+
 python -m venv .venv
 
 source .venv/bin/activate
@@ -12,7 +14,7 @@ pip install ansible-lint
 pip install pyYAML
 
 ansible-galaxy collection install davidban77.gns3
-
+ansible-galaxy collection install ansible.netcommon
 
 #run playbook
 ansible-playbook lab.yml -e execute=build
