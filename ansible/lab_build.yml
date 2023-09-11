@@ -19,8 +19,8 @@
         url: "{{ gns3_url }}"
         project_name: "{{ project_name }}"
         project_path: "{{ projects_path }}{{ project_name }}"
-        scene_height: 500
-        scene_width: 500
+        scene_height: 550
+        scene_width: 550
         state: present
         nodes_spec: "{{ gns3_nodes_spec }}"
         links_spec: "{{ gns3_links_spec }}"
@@ -46,17 +46,5 @@
 - name: "Plays to run for each inventory host"
   hosts: all
   gather_facts: false
-#  tasks:
-#   - name: Configure hostname
-#     telnetX:
-#       port: "{{ hostvars['localhost']['nodes_inventory']['nodes_inventory'][inventory_hostname]['console_port'] }}"
-#       timeout: 5
-#       send_carriage_return: true
-#       prompts:
-#         - '[>#]'
-#       command:
-#         - configure terminal
-#         - hostname {{ inventory_hostname }}
-#       when: ansible_net_os == "IOSv"
   roles:
-    - basic_iosv
+    - basic_iosv_telnet
