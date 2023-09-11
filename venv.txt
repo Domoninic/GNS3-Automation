@@ -9,7 +9,7 @@ python3 -m pip install --upgrade pip
 
 pip install gns3fy==0.7.2
 pip install netmiko
-pip install ansible
+pip install ansible-core
 pip install ansible-lint
 pip install pyYAML
 
@@ -17,4 +17,5 @@ ansible-galaxy collection install davidban77.gns3
 ansible-galaxy collection install ansible.netcommon
 
 #run playbook
-ansible-playbook lab.yml -e execute=build
+ansible-playbook ./ansible/lab.yml -e execute=destroy
+ansible-playbook ./ansible/lab.yml -e execute=build -i ./ansible/inventory/hosts.yml
