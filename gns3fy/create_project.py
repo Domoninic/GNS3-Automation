@@ -35,8 +35,10 @@ def main():
     project = Project(
         name=PROJECT,
         path=GNS3_PROJECT_PATH,
-        scene_height=500,
-        scene_width=500,
+        scene_height=510,
+        scene_width=510,
+        drawing_grid_size=100,
+        grid_size=50,
         connector=gns3_server,
     )
 
@@ -49,8 +51,10 @@ def main():
         project = Project(
             name=PROJECT,
             path=GNS3_PROJECT_PATH,
-            scene_height=500,
-            scene_width=500,
+            scene_height=510,
+            scene_width=510,
+            drawing_grid_size=100,
+            grid_size=50,
             connector=gns3_server,
         )
         project.create()
